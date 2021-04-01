@@ -74,10 +74,3 @@ spec:
           value: study-service:5003
         - name: ADDR_EMAIL_CLIENT_SERVICE
           value: email-client-service:5005
-        resources:
-          requests:
-            cpu: 30m
-            memory: 150Mi
-          limits:
-            cpu: 100m
-            memory: 300Mi
