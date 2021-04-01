@@ -36,13 +36,6 @@ spec:
         - containerPort: 587
           name: smtpauth
           protocol: TCP
-        resources:
-          requests:
-            cpu: 30m
-            memory: 150Mi
-          limits:
-            cpu: 100m
-            memory: 300Mi
       volumes:
       - name: config-volume
         configMap:
