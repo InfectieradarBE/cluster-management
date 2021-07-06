@@ -35,6 +35,16 @@ spec:
               key: password
         ports:
         - containerPort: 27017
+<<<<<<< HEAD:deployments/mongo-deployment.yaml
+=======
+        resources:
+          requests:
+            cpu: 75m
+            memory: 150Mi
+          limits:
+            cpu: 200m
+            memory: 1Gi
+>>>>>>> upstream/master:archived/deployments/mongo-deployment.yaml
         volumeMounts:
         - mountPath: "/data/db"
           name: task-pv-storage

@@ -17,7 +17,17 @@ spec:
     spec:
       containers:
       - name: web-client
-        image: sajeeth1009/web-app:latest
+        image: sajeeth1009/participant-webapp:v0.0.1
         imagePullPolicy: Always
         ports:
         - containerPort: 3100
+<<<<<<< HEAD:deployments/web-client-deployment.yaml
+=======
+        resources:
+          requests:
+            cpu: 200m
+            memory: 300Mi
+          limits:
+            cpu: 300m
+            memory: 350Mi
+>>>>>>> upstream/master:archived/deployments/web-client-deployment.yaml
