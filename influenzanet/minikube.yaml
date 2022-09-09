@@ -1,0 +1,55 @@
+domain: local.infectieradar.be
+
+basicAuth:
+  enabled: false
+  username: "user"
+  password: "password"
+
+clusterIssuer: 'localhost'
+acmeServer: https://acme-service.dev.svc.cluster.local:9000/acme/acme/directory
+acmeEmail: admin@local.infectieradar.be
+
+jwtKey: "jwt_key"
+mongoPassword: "abc123"
+googleRecaptchaKey: "6LeRekQcAAAAABGSBqjYqlcCJ8ljVFb9-wV6WE9B"
+studyGlobalSecret: "study_global_secret"
+mailgunEndpoint: ""
+
+platformCredentials:
+  email: "admin@local.infectieradar.be"
+  password: "eeL#oth6"
+
+createStorageClass: false
+
+smtpServers:
+  from: "no-reply@local.infectieradar.be"
+  sender: no-reply@local.infectieradar.be
+  servers:
+    - host: smtp-service.dev.svc.cluster.local
+      port: 25
+      connections: 2
+      sendTimeout: 5
+      auth:
+        user: ""
+        password: ""
+
+prioSmtpServers:
+  from: "no-reply@local.infectieradar.be"
+  sender: no-reply@local.infectieradar.be
+  servers:
+    - host: smtp-service.dev.svc.cluster.local
+      port: 25
+      connections: 2
+      sendTimeout: 5
+      auth:
+        user: ""
+        password: ""
+
+# svcWebParticipant:
+#     image: grippenetch/participant-webapp:v1.10-minikube
+
+svcManagementApi:
+  corsAllowOrigins: 'https://local.infectieradar.be'
+
+svcParticipantApi:
+  corsAllowOrigins: 'https://local.infectieradar.be'

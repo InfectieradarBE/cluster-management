@@ -2,15 +2,13 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-platformName: "Influenzanet"
-contactEmail: "support@localhost"
+platformName: "Infectieradar Belgium"
+contactEmail: "support@survey.infectieradar.be"
 
-namespace: case
+namespace: belgium
 
 basicAuth:
   enabled: false
-  username: "user"
-  password: "password"
 
 ####
 # Global flags
@@ -23,32 +21,32 @@ dbNamePrefix: ''
 useRecaptcha: true
 
 # Replace this with the domain name for Influenzanet Application
-domain: example.com
+domain: survey.infectieradar.be
 
 ingress:
   enabled: true
   name: ingress-web
   # Use a simplified Ingress configuration (with wildcard path instead of specific)
-  simplified: true
+  simplified: false
 
 # Replace this with a list of domains to be included in the certificate
 tlsDomains:
-  - example.com
+  - "{{ .Values.domain }}"
 
+# Redirect the following domains (if any) to the root domain
 redirectDomains:
-  - subdomain.example.com
 
 participantApiPath: "/api"
 managementApiPath: "/admin"
 
 # TLS Certificate Issuer Section
-# issuerType 'acme', 'ca' 
+# issuerType 'acme', 'ca'
 issuerType: acme
 
 # Cluster issuer Name
-clusterIssuer : "letsencrypt"
-acmeServer: https://acme-v02.api.letsencrypt.org/directory
-acmeEmail: user.name@domain.com
+clusterIssuer: "letsencrypt"
+acmeServer: "https://acme-v02.api.letsencrypt.org/directory"
+acmeEmail: admin@survey.infectieradar.be
 
 # Name of the secret used to store the generated certificat will be stored
 tlsSecretName: 'site-tls-web'
@@ -59,17 +57,8 @@ CAIssuerSecretName: 'ca-issuer-secret'
 # Secrets Configuration Section
 
 # JSON Web Token secret key (32 bytes random, base64 encoded). 
-jwtKey: ""
 mongoUsername: "admin"
-mongoPassword: "abc123"
 mongoConnectionPrefix: ""
-
-# The actual value given by google is expected here
-googleRecaptchaKey: ""
-
-# studyGlobalSecret, used together with a study secretKey to compute a
-# participantID from a profileID, should be a string with high entropy
-studyGlobalSecret: ""
 
 # Persistant Storage Section
 # Create a dedicated storage class (can be removed if your cluster already provides it)
@@ -78,33 +67,33 @@ createStorageClass: true
 # Email service SMTP configuration
 ## Regular Email Server
 smtpServers:
-  from: "username@email.com"
-  sender: username@email.com
+  from: "Infectieradar Belgium <noreply@survey.infectieradar.be>"
+  sender: noreply@survey.infectieradar.be
   replyTo:
-    - username@email.com
+    - noreply@survey.infectieradar.be
   servers:
-    - host: smtp.gmail.com
-      port: 465
-      connections: 2
+    - host: smtp.eu.mailgun.org
+      port: 587
+      connections: 1
       sendTimeout: 5
       auth:
-        user: username@email.com
-        password: "password" 
+        user: noreply@survey.infectieradar.be
+        password: "{{ .Values.smtpPassword }}"
 
 ## High Priority email server
 prioSmtpServers:
-  from: "username@email.com"
-  sender: username@email.com
+  from: 'Infectieradar Belgium <noreply@survey.infectieradar.be>'
+  sender: noreply@survey.infectieradar.be
   replyTo:
-    - username@email.com
+    - noreply@survey.infectieradar.be
   servers:
-    - host: smtp.gmail.com
-      port: 465
-      connections: 2
+    - host: "smtp.eu.mailgun.org"
+      port: 587
+      connections: 1
       sendTimeout: 5
       auth:
-        user: username@email.com
-        password: "password" 
+        user: noreply@survey.infectieradar.be
+        password: "{{ .Values.smtpPassword }}"
 
 globalDb:
   dbConnexionStr: mongo-atlas-service:27017
@@ -126,7 +115,7 @@ userDB:
 svcWebParticipant:
     name: web-client
     replicas: 1
-    image: influenzanet/participant-webapp:v0.0.1
+    image: infectieradarbe/participant-webapp:v1.0.8
     imagePullPolicy: IfNotPresent
     containerPort: 3100
     serviceName: web-client-service
@@ -134,7 +123,7 @@ svcWebParticipant:
 # EMAIL CLIENT #
 svcEmailClient:
   name: email-client
-  image: influenzanet/email-client-service-image:v0.9.3
+  image: infectieradarbe/email-client-service-image:v0.9.3
   imagePullPolicy: IfNotPresent
   replicas: 1
   containerPort: 5005
@@ -145,7 +134,7 @@ svcEmailClient:
 svcLogging:
   name: logging
   replicas: 1
-  image: influenzanet/logging-service-image:v0.2.0
+  image: infectieradarbe/logging-service-image:v0.1.0
   imagePullPolicy: IfNotPresent
   containerPort: 5006
   serviceName: logging-service
@@ -155,19 +144,19 @@ svcLogging:
 #  MANAGEMENT API #
 svcManagementApi:
   name: management-api
-  image: influenzanet/management-api-image:v0.15.1
+  image: influenzanet/management-api-image:v1.0.2
   imagePullPolicy: IfNotPresent
   containerPort: 3232      
-  corsAllowOrigins: 'https://tofudumplings.com,http://tofudumplings.com'
+  corsAllowOrigins: "https://survey.infectieradar.be,http://survey.infectieradar.be"
   debugMode: "false"
   serviceName: management-api-service
 
 svcParticipantApi:
   name: participant-api
-  image: influenzanet/participant-api-image:v0.15.1
+  image: infectieradarbe/participant-api-image:v0.15.1
   imagePullPolicy: IfNotPresent
   containerPort: 3231
-  corsAllowOrigins: 'https://tofudumplings.com,http://tofudumplings.com'
+  corsAllowOrigins: "https://survey.infectieradar.be,http://survey.infectieradar.be"
   debugMode: "false"
   useDeleteEndpoint: true
   disableSignupEndpoint: false
@@ -177,7 +166,7 @@ svcParticipantApi:
 SvcMessageScheduler:
   name: messaging-scheduler
   replicas: 1
-  image: influenzanet/messaging-scheduler-image:v0.9.3
+  image: infectieradarbe/message-scheduler-image:v0.9.3
   imagePullPolicy: IfNotPresent
   containerPort: 5009
   serviceName: messaging-scheduler-service
@@ -194,7 +183,7 @@ SvcMessageScheduler:
 svcMessaging:
   name: messaging
   replicas: 1
-  image: influenzanet/messaging-service-image:v0.9.3
+  image: infectieradarbe/messaging-service-image:v0.9.3
   imagePullPolicy: IfNotPresent
   containerPort: 5004
   serviceName: messaging-service
@@ -206,7 +195,7 @@ svcMongoDb:
   name: mongo
   serviceName: mongo-atlas-service
   replicas: 1
-  # NOTE: if using 'IfNotPresent' pull policy, do not use 'latest' as image version in
+  # NOTE: if using 'Always' pull policy, do not use 'latest' as image version in
   # order to prevent unwanted updates when the pod is recreated
   image: mongo:5.0
   imagePullPolicy: IfNotPresent
@@ -231,7 +220,7 @@ svcMongoDb:
 
 svcStudyService:
   name: study
-  image: influenzanet/study-service-image:v0.16.2
+  image: infectieradarbe/study-service-image:v0.16.2
   imagePullPolicy: IfNotPresent
   replicas: 1
   serviceName: study-service
@@ -246,7 +235,7 @@ svcStudyService:
 # USER MANAGEMENT SERVICE #
 svcUserManagement:
   name: user-management
-  image: influenzanet/user-management-image:v0.20.4
+  image: infectieradarbe/user-management-image:v0.20.2
   imagePullPolicy: IfNotPresent
   replicas: 1
   serviceName: "user-management-service"
