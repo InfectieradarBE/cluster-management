@@ -1,0 +1,274 @@
+# Default values for influenzanet-2.0.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+platformName: "Influenzanet"
+contactEmail: "support@localhost"
+
+namespace: case
+
+basicAuth:
+  enabled: false
+  username: "user"
+  password: "password"
+
+####
+# Global flags
+####
+
+# Common prefix for database names (use for multitenant db)
+dbNamePrefix: ''
+
+# Use Google Recaptcha, if true the secret googleRecaptchaKey should be defined too
+useRecaptcha: true
+
+# Replace this with the domain name for Influenzanet Application
+domain: example.com
+
+ingress:
+  enabled: true
+  name: ingress-web
+  # Use a simplified Ingress configuration (with wildcard path instead of specific)
+  simplified: true
+
+# Replace this with a list of domains to be included in the certificate
+tlsDomains:
+  - example.com
+
+redirectDomains:
+  - subdomain.example.com
+
+participantApiPath: "/api"
+managementApiPath: "/admin"
+
+# TLS Certificate Issuer Section
+# issuerType 'acme', 'ca' 
+issuerType: acme
+
+# Cluster issuer Name
+clusterIssuer : "letsencrypt"
+acmeServer: https://acme-v02.api.letsencrypt.org/directory
+acmeEmail: user.name@domain.com
+
+# Name of the secret used to store the generated certificat will be stored
+tlsSecretName: 'site-tls-web'
+
+# In case of issuerType 'ca' put here the name of the secret containing the ca certificate and key, leave empty for acme
+CAIssuerSecretName: 'ca-issuer-secret'
+
+# Secrets Configuration Section
+
+# JSON Web Token secret key (32 bytes random, base64 encoded). 
+jwtKey: ""
+mongoUsername: "admin"
+mongoPassword: "abc123"
+mongoConnectionPrefix: ""
+
+# The actual value given by google is expected here
+googleRecaptchaKey: ""
+
+# studyGlobalSecret, used together with a study secretKey to compute a
+# participantID from a profileID, should be a string with high entropy
+studyGlobalSecret: ""
+
+# Persistant Storage Section
+# Create a dedicated storage class (can be removed if your cluster already provides it)
+createStorageClass: true
+
+# Email service SMTP configuration
+## Regular Email Server
+smtpServers:
+  from: "username@email.com"
+  sender: username@email.com
+  replyTo:
+    - username@email.com
+  servers:
+    - host: smtp.gmail.com
+      port: 465
+      connections: 2
+      sendTimeout: 5
+      auth:
+        user: username@email.com
+        password: "password" 
+
+## High Priority email server
+prioSmtpServers:
+  from: "username@email.com"
+  sender: username@email.com
+  replyTo:
+    - username@email.com
+  servers:
+    - host: smtp.gmail.com
+      port: 465
+      connections: 2
+      sendTimeout: 5
+      auth:
+        user: username@email.com
+        password: "password" 
+
+globalDb:
+  dbConnexionStr: mongo-atlas-service:27017
+  dbSecretName: case-mongodb-atlas
+
+messageDB:
+  dbConnexionStr: mongo-atlas-service:27017
+  dbSecretName: case-mongodb-atlas
+
+studyDB:
+  dbConnexionStr: mongo-atlas-service:27017
+  dbSecretName: case-mongodb-atlas
+
+userDB:
+  dbConnexionStr: mongo-atlas-service:27017
+  dbSecretName: case-mongodb-atlas
+
+# PARTICIPANT WEBAPP
+svcWebParticipant:
+    name: web-client
+    replicas: 1
+    image: influenzanet/participant-webapp:v0.0.1
+    imagePullPolicy: IfNotPresent
+    containerPort: 3100
+    serviceName: web-client-service
+
+# EMAIL CLIENT #
+svcEmailClient:
+  name: email-client
+  image: influenzanet/email-client-service-image:v0.9.3
+  imagePullPolicy: IfNotPresent
+  replicas: 1
+  containerPort: 5005
+  serviceName: email-client-service
+  configMapName: email-server-config
+  
+# LOGGING SERVICE #
+svcLogging:
+  name: logging
+  replicas: 1
+  image: influenzanet/logging-service-image:v0.2.0
+  imagePullPolicy: IfNotPresent
+  containerPort: 5006
+  serviceName: logging-service
+  dbSecretName: case-mongodb-atlas
+  dbConnexionStr: mongo-atlas-service:27017
+
+#  MANAGEMENT API #
+svcManagementApi:
+  name: management-api
+  image: influenzanet/management-api-image:v0.15.1
+  imagePullPolicy: IfNotPresent
+  containerPort: 3232      
+  corsAllowOrigins: 'https://tofudumplings.com,http://tofudumplings.com'
+  debugMode: "false"
+  serviceName: management-api-service
+
+svcParticipantApi:
+  name: participant-api
+  image: influenzanet/participant-api-image:v0.15.1
+  imagePullPolicy: IfNotPresent
+  containerPort: 3231
+  corsAllowOrigins: 'https://tofudumplings.com,http://tofudumplings.com'
+  debugMode: "false"
+  useDeleteEndpoint: true
+  disableSignupEndpoint: false
+  recaptchaSecretName: recaptcha-collection
+  serviceName: participant-api-service
+  
+SvcMessageScheduler:
+  name: messaging-scheduler
+  replicas: 1
+  image: influenzanet/messaging-scheduler-image:v0.9.3
+  imagePullPolicy: IfNotPresent
+  containerPort: 5009
+  serviceName: messaging-scheduler-service
+  dbTimeout: 30
+  dbIdleTimeout: 46
+  # Batch Sending Interval for High Priority (seconds)
+  intervalHighPrio: 45
+  # Batch Sending interval for Low priority messages (seconds)
+  intervalLowPrio: 1800
+  # Batch Sending interval for Auto messages (seconds)
+  intervalAutoMessage: 120
+
+# MESSAGING SERVICE #  
+svcMessaging:
+  name: messaging
+  replicas: 1
+  image: influenzanet/messaging-service-image:v0.9.3
+  imagePullPolicy: IfNotPresent
+  containerPort: 5004
+  serviceName: messaging-service
+  dbTimeout: 30
+  dbIdleTimeout: 46
+
+svcMongoDb:
+  enabled: true
+  name: mongo
+  serviceName: mongo-atlas-service
+  replicas: 1
+  # NOTE: if using 'IfNotPresent' pull policy, do not use 'latest' as image version in
+  # order to prevent unwanted updates when the pod is recreated
+  image: mongo:5.0
+  imagePullPolicy: IfNotPresent
+  # Secret used to create the ROOT password, should have 'username' & password entry
+  dbSecretName: case-mongodb-atlas
+  containerPort: 27017
+  # If false the service will be assigned to NodePort instead of clusterIp
+  headless: true
+  # Name of the pv to create
+  pvClaimName: database-pv-claim
+  # Storage class name to use for the MongoDb 
+  storageClass: influenzanet-storage
+  accessModes:
+    - ReadWriteOnce
+  # Size of the requested storage
+  storageRequested: 50Gi
+  # Path to mount in the container to the data directory (can depends on the image used)
+  # For bitnami use /bitnami/mongodb
+  dbDataPath: /data/db
+  envRootUserName: MONGO_INITDB_ROOT_USERNAME
+  envRootPasswordName: MONGO_INITDB_ROOT_PASSWORD
+
+svcStudyService:
+  name: study
+  image: influenzanet/study-service-image:v0.16.2
+  imagePullPolicy: IfNotPresent
+  replicas: 1
+  serviceName: study-service
+  containerPort: 5003
+  dbTimeout: 30
+  dbIdleTimeout: 46
+  timerEventFrequency: 86400
+  timerEventCheckIntervalMin: 3600
+  timerEventCheckIntervalVar: 900
+  globalSecretName: study-global-secret
+
+# USER MANAGEMENT SERVICE #
+svcUserManagement:
+  name: user-management
+  image: influenzanet/user-management-image:v0.20.4
+  imagePullPolicy: IfNotPresent
+  replicas: 1
+  serviceName: "user-management-service"
+  containerPort: 5002
+  dbTimeout: 30
+  dbIdleTimeout: 46
+  
+  # JWT Tokens
+  # Token expiration time in Minute
+  tokenExpiration: 5
+  
+  # Name of the secret containing the jwt secret key
+  jwtSecretName: jwt-collection
+  # Maximum number of new created accounts, during the signupRateLimitWindow (5 minutes)
+  newUserRateLimit: 100
+  # Delay (seconds) after which to cleanup user account when it has not been verified
+  # NOTE: do not remove quotes to prevent large int conversion to exponential notation
+  cleanupUnverifiedUsersAfter: "129000"
+  # Delay (seconds) after which to send a reminder to unverified users If the
+  # reminder should not be used, simply set this value to a larger number than
+  # the value used to clean up unverified users
+  # NOTE: do not remove quotes to prevent large int conversion to exponential notation
+  sendReminderToUnverifiedUserAfter: "1290000"
+  # Lifetime in seconds for verification code of a new account. Default is 15 minutes
+  verificationCodeLifetime: 900
