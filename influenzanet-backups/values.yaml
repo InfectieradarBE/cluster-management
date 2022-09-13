@@ -4,3 +4,7 @@ storageClass: influenzanet-storage
 accessModes:
   - ReadWriteOnce
 storageRequested: 50Gi
+
+backupImage: infectieradarbe/mongo-rclone:latest
+backupScript: backup.sh
+rcloneConf: ""

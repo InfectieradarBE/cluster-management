@@ -14,6 +14,10 @@ spec:
       backoffLimit: 0
       template:
         spec:
+          volumes:
+            - name: rclone-config-volume
+              configMap:
+                name: rclone-config
           affinity:
               podAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
@@ -21,14 +25,10 @@ spec:
                     matchLabels:
                       app: mongo
                   topologyKey: kubernetes.io/hostname
-          volumes:
-            - name: backups-pv
-              persistentVolumeClaim:
-                claimName: backups-pv-claim
           restartPolicy: OnFailure
           containers:
           - name: backup-mongodb
-            image: {{ .Values.svcMongoDb.image }}
+            image: {{ .Values.backupImage }}
             env:
               - name: MONGODB_URI
                 value: {{ .Values.mongodbUri }}
@@ -45,6 +45,10 @@ spec:
             command:
             - /bin/sh
             - -c
+            {{ if .Values.backupScript -}}
+            - |
+{{ .Files.Get .Values.backupScript | indent 14 }}
+            {{ else -}}
             - |
               date;
               df -B1 /data/backups;
@@ -57,6 +61,7 @@ spec:
               -u "$MONGODB_USER" \
               -p "$MONGODB_PASSWORD" 2>&1;
               if [ "$?" = "0" ]; then echo "DONE";else 1>&2 echo "FAILED";exit 1;fi
+            {{ end -}}
             volumeMounts:
-              - mountPath: "/data/backups"
-                name: backups-pv
+              - mountPath: "/config"
+                name: rclone-config-volume
