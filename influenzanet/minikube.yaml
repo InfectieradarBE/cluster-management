@@ -45,9 +45,6 @@ prioSmtpServers:
         user: ""
         password: ""
 
-# svcWebParticipant:
-#     image: grippenetch/participant-webapp:v1.10-minikube
-
 svcManagementApi:
   corsAllowOrigins: 'https://local.infectieradar.be'
 
