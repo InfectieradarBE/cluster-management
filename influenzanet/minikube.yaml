@@ -21,8 +21,6 @@ platformCredentials:
   email: "admin@local.infectieradar.be"
   password: "eeL#oth6"
 
-createStorageClass: false
-
 smtpServers:
   from: "no-reply@local.infectieradar.be"
   sender: no-reply@local.infectieradar.be
