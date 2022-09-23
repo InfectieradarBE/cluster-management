@@ -1,5 +1,7 @@
 domain: local.infectieradar.be
 
+allowAgent: random_string_here
+
 basicAuth:
   enabled: false
   username: "user"
