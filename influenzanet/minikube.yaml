@@ -1,6 +1,6 @@
 domain: local.infectieradar.be
 
-allowAgent: random_string_here
+allowAgent:
 
 basicAuth:
   enabled: false
@@ -14,7 +14,7 @@ acmeEmail: admin@local.infectieradar.be
 jwtKey: "jwt_key"
 mongoPassword: "abc123"
 googleRecaptchaKey: "6LeRekQcAAAAABGSBqjYqlcCJ8ljVFb9-wV6WE9B"
-studyGlobalSecret: "study_global_secret"
+studyGlobalSecret: ""
 mailgunEndpoint: ""
 
 platformCredentials:
