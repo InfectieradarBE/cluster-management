@@ -206,6 +206,8 @@ svcMongoDb:
   headless: true
   # Name of the pv to create
   pvClaimName: database-pv-claim
+  # Use this for static provisioning
+  volumeName: "database-pv"
   # Storage class name to use for the MongoDb 
   storageClass: influenzanet-storage
   accessModes:
