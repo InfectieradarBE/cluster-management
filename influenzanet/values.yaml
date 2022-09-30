@@ -27,7 +27,7 @@ ingress:
   enabled: true
   name: ingress-web
   # Use a simplified Ingress configuration (with wildcard path instead of specific)
-  simplified: false
+  simplified: true
 
 # Replace this with a list of domains to be included in the certificate
 tlsDomains:
