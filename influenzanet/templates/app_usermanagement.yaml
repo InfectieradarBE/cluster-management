@@ -8,7 +8,7 @@ metadata:
   labels:
     app: {{ .name }}
 spec:
-  replicas: 1
+  replicas: {{ .replicas | default 1 }}
   selector:
     matchLabels:
       app: {{ .name }}
@@ -33,45 +33,45 @@ spec:
         - name: DB_DB_NAME_PREFIX
           value: "{{ $.Values.dbNamePrefix }}"
         - name: GLOBAL_DB_CONNECTION_STR
-          value: mongo-atlas-service:27017
+          value: "{{ (tpl $.Values.dbConnectionStr $) }}"
         - name: GLOBAL_DB_CONNECTION_PREFIX
-          valueFrom:
-            secretKeyRef:
-              name: {{ $.Values.globalDb.dbSecretName }}
-              key: connectionPrefix
+          value: "{{ $.Values.connectionPrefix }}"
         - name: GLOBAL_DB_USERNAME
           valueFrom:
             secretKeyRef:
-              name: {{ $.Values.globalDb.dbSecretName }}
+              name: "{{ $.Values.dbSecretName }}"
               key: username
         - name: GLOBAL_DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ $.Values.globalDb.dbSecretName }}
+              name: "{{ $.Values.dbSecretName }}"
               key: password
         - name: USER_DB_CONNECTION_STR
-          value: {{ $.Values.userDB.dbConnexionStr }}
+          value: "{{ default .dbConnectionStr (tpl $.Values.dbConnectionStr $) }}"
         - name: USER_DB_CONNECTION_PREFIX
-          valueFrom:
-            secretKeyRef:
-              name: {{ $.Values.userDB.dbSecretName }}
-              key: connectionPrefix
+          value: "{{ default .dbConnectionPrefix $.Values.dbConnectionPrefix }}"
         - name: USER_DB_USERNAME
           valueFrom:
             secretKeyRef:
-              name: {{ $.Values.userDB.dbSecretName }}
+              name: "{{ default .dbSecretName $.Values.dbSecretName }}"
               key: username
         - name: USER_DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ $.Values.userDB.dbSecretName }}
+              name: "{{ default .dbSecretName $.Values.dbSecretName }}"
               key: password
         - name: TOKEN_EXPIRATION_MIN
           value: {{ .tokenExpiration | quote }}
+        - name: INVITATION_TOKEN_LIFETIME
+          value: {{ .tokenInvitationLifetime | quote }}
+        - name: CONTACT_VERIFICATION_TOKEN_LIFETIME
+          value: {{ .tokenContactVerificationLifetime | quote }}
+        - name: WEEKDAY_ASSIGNATION_WEIGHTS
+          value: {{ .weekdayAssignationWeights | quote }}
         - name: JWT_TOKEN_KEY
           valueFrom:
             secretKeyRef:
-              name: {{ .jwtSecretName }}
+              name: "jwt-collection"
               key: jwt-key
         - name: ARGON2_MEMORY
           value: "65536"
@@ -91,8 +91,10 @@ spec:
           value: {{ .sendReminderToUnverifiedUserAfter | quote }}
         - name: VERIFICATION_CODE_LIFETIME
           value: {{ .verificationCodeLifetime | quote }}
+        - name: LOG_LEVEL
+          value: {{ .logLevel | quote }}
         ports:
-        - containerPort: {{ .containerPort }}
+          - containerPort: {{ .containerPort }}
 ---
 apiVersion: v1
 kind: Service

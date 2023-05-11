@@ -8,7 +8,7 @@ metadata:
   labels:
     app: {{ .name }}
 spec:
-  replicas: 1
+  replicas: {{ .replicas | default 1}}
   selector:
     matchLabels:
       app: {{ .name }}
@@ -23,6 +23,14 @@ spec:
           imagePullPolicy: {{ .imagePullPolicy | default "Always" }}
           ports:
             - containerPort: {{ .containerPort }} 
+{{- if .extraVolumeMounts}}
+          volumeMounts:
+{{ toYaml .extraVolumeMounts | indent 10 }}
+{{ end -}}
+{{- if .extraVolumes }}
+      volumes:
+{{ toYaml .extraVolumes | indent 6 }}
+{{ end }}
 ---
 apiVersion: v1
 kind: Service

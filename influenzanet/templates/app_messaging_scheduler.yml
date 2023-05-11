@@ -8,7 +8,7 @@ metadata:
   labels:
     app: {{ .name }}
 spec: 
-  replicas: {{ .replicas }}
+  replicas: {{ .replicas | default 1}}
   selector:
     matchLabels:
       app: {{ .name }}
@@ -23,38 +23,32 @@ spec:
         imagePullPolicy: {{ .imagePullPolicy | default "Always" }}
         env:
           - name: GLOBAL_DB_CONNECTION_STR
-            value: {{ $.Values.globalDb.dbConnexionStr }}
+            value: "{{ (tpl $.Values.dbConnectionStr $) }}"
           - name: GLOBAL_DB_CONNECTION_PREFIX
-            valueFrom:
-              secretKeyRef:
-                name: {{ $.Values.globalDb.dbSecretName }}
-                key: connectionPrefix
+            value: "{{ $.Values.connectionPrefix }}"
           - name: GLOBAL_DB_USERNAME
             valueFrom:
               secretKeyRef:
-                name: {{ $.Values.globalDb.dbSecretName }}
+                name: "{{ $.Values.dbSecretName }}"
                 key: username
           - name: GLOBAL_DB_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ $.Values.globalDb.dbSecretName }}
+                name: "{{ $.Values.dbSecretName }}"
                 key: password
           - name: MESSAGE_DB_CONNECTION_STR
-            value: {{ $.Values.messageDB.dbConnexionStr }}
+            value: "{{ default .dbConnectionStr (tpl $.Values.dbConnectionStr $) }}"
           - name: MESSAGE_DB_CONNECTION_PREFIX
-            valueFrom:
-              secretKeyRef:
-                name: {{ $.Values.messageDB.dbSecretName }}
-                key: connectionPrefix
+            value: "{{ default .dbConnectionPrefix $.Values.dbConnectionPrefix }}"
           - name: MESSAGE_DB_USERNAME
             valueFrom:
               secretKeyRef:
-                name: {{ $.Values.messageDB.dbSecretName }}
+                name: "{{ default .dbSecretName $.Values.dbSecretName }}"
                 key: username
           - name: MESSAGE_DB_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ $.Values.messageDB.dbSecretName }}
+                name: "{{ default .dbSecretName $.Values.dbSecretName }}"
                 key: password
           - name: DB_TIMEOUT
             value: "{{ .dbTimeout }}"
@@ -62,6 +56,8 @@ spec:
             value: "{{ .dbIdleTimeout }}"
           - name: DB_MAX_POOL_SIZE
             value: "8"
+          - name: LOG_LEVEL
+            value: "{{ .logLevel }}"
           - name: DB_DB_NAME_PREFIX
             value: "{{ $.Values.dbNamePrefix }}"
           - name: MESSAGE_SCHEDULER_INTERVAL_HIGH_PRIO
@@ -70,6 +66,10 @@ spec:
             value: "{{ .intervalLowPrio }}"
           - name: MESSAGE_SCHEDULER_INTERVAL_AUTO_MESSAGE
             value: "{{ .intervalAutoMessage }}"
+          - name: MESSAGE_SCHEDULER_INTERVAL_PARTICIPANT_MESSAGE
+            value: "{{ .intervalParticipantMessage }}"
+          - name: MESSAGE_SCHEDULER_INTERVAL_RESEARCHER_NOTIFICATION
+            value: "{{ .intervalResearcherNotification }}"
           - name: ADDR_USER_MANAGEMENT_SERVICE
             value: "{{ template "ref.UserManagement" $ }}"
           - name: ADDR_STUDY_SERVICE

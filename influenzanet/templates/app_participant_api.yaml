@@ -8,7 +8,7 @@ metadata:
   labels:
     app: {{ .name }}
 spec: 
-    replicas: 1
+    replicas: {{ .replicas | default 1}}
     selector:
         matchLabels:
           app: {{ .name }}
@@ -27,7 +27,7 @@ spec:
                 - name: GATEWAY_LISTEN_PORT
                   value: {{ .containerPort | quote }}
                 - name: CORS_ALLOW_ORIGINS
-                  value: {{ .corsAllowOrigins | quote }}
+                  value: {{ tpl .corsAllowOrigins $ | quote }}
                 - name: DEBUG_MODE
                   value: {{ .debugMode | quote }}
                 - name: ADDR_USER_MANAGEMENT_SERVICE
@@ -40,13 +40,13 @@ spec:
                   value: {{ .disableSignupEndpoint | quote }}
                 - name: USE_RECAPTCHA
                   value: "{{ $.Values.useRecaptcha }}"
-                {{ if eq $.Values.useRecaptcha true }}
+                {{- if eq $.Values.useRecaptcha true }}
                 - name: RECAPTCHA_SECRET
                   valueFrom:
                     secretKeyRef:
-                      name: {{ .recaptchaSecretName }}
+                      name: "recaptcha-collection"
                       key: recaptchaKey
-                {{ end }}
+                {{- end }}
               ports:
                 - containerPort: {{ .containerPort }}
 ---
