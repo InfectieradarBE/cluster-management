@@ -162,7 +162,7 @@ dbSecretName: "case-mongodb-atlas"
 svcWebParticipant:
   name: web-client
   replicas: 1
-  image: infectieradarbe/participant-webapp:v1.6.9
+  image: infectieradarbe/participant-webapp:v1.8.28
   imagePullPolicy: Always
   containerPort: 3100
   serviceName: web-client-service
@@ -173,7 +173,7 @@ svcWebParticipant:
 # EMAIL CLIENT #
 svcEmailClient:
   name: email-client
-  image: influenzanet/email-client-service-image:v1.3.2
+  image: influenzanet/email-client-service-image:v1.5.2
   imagePullPolicy: IfNotPresent
   replicas: 1
   containerPort: 5005
@@ -193,7 +193,7 @@ svcLogging:
 svcManagementApi:
   name: management-api
   replicas: 1
-  image: influenzanet/management-api-image:v1.3.0
+  image: influenzanet/management-api-image:v1.5.0
   imagePullPolicy: IfNotPresent
   containerPort: 3232
   corsAllowOrigins: "https://{{ .Values.domain }},http://{{ .Values.domain }}"
@@ -204,7 +204,7 @@ svcManagementApi:
 svcParticipantApi:
   name: participant-api
   replicas: 1
-  image: influenzanet/participant-api-image:v1.3.0
+  image: influenzanet/participant-api-image:v1.5.0
   imagePullPolicy: IfNotPresent
   containerPort: 3231
   corsAllowOrigins: "https://{{ .Values.domain }},http://{{ .Values.domain }}"
@@ -217,7 +217,7 @@ svcParticipantApi:
 SvcMessageScheduler:
   name: messaging-scheduler
   replicas: 1
-  image: influenzanet/messaging-scheduler-image:v1.3.2
+  image: influenzanet/messaging-scheduler-image:v1.5.2
   imagePullPolicy: IfNotPresent
   containerPort: 5009
   serviceName: messaging-scheduler-service
@@ -236,7 +236,7 @@ SvcMessageScheduler:
 svcMessaging:
   name: messaging
   replicas: 1
-  image: influenzanet/messaging-service-image:v1.3.2
+  image: influenzanet/messaging-service-image:v1.5.2
   imagePullPolicy: IfNotPresent
   containerPort: 5004
   serviceName: messaging-service
@@ -247,7 +247,7 @@ svcMessaging:
 svcStudyService:
   name: study
   replicas: 1
-  image: influenzanet/study-service-image:v1.5.0
+  image: influenzanet/study-service-image:v1.7.3
   imagePullPolicy: IfNotPresent
   serviceName: study-service
   containerPort: 5003
