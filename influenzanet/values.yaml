@@ -5,8 +5,8 @@
 # Platform description
 ##
 
-namespace: belgium
-platformName: "Infectieradar Belgium"
+namespace: infectieradar-be
+platformName: "Infectieradar Belgium Staging"
 contactEmail: "support@survey.infectieradar.be"
 
 ##
@@ -19,7 +19,7 @@ ingress:
   name: "ingress-web"
 
 # Replace this with the main domain name for Influenzanet Application
-domain: survey.infectieradar.be
+domain: infectieradarbe.staging.influenzanet.info
 
 # Additional domains to redirect to the main domain
 redirectDomains: []
@@ -40,7 +40,7 @@ tlsDomains: []
 issuerType: "acme"
 
 # If issuerType: 'acme'
-clusterIssuer: "letsencrypt"
+clusterIssuer: "letsencrypt-infectieradar-be-staging"
 acmeServer: "https://acme-v02.api.letsencrypt.org/directory"
 acmeEmail: "admin@survey.infectieradar.be"
 # Name of the secret used to store the generated certificate
@@ -110,7 +110,7 @@ studyGlobalSecret: ""
 
 # Persistant Storage Section
 # Create a dedicated storage class (can be removed if your cluster already provides it)
-createStorageClass: true
+createStorageClass: false
 
 ##
 # MongoDB service configuration
@@ -118,7 +118,7 @@ createStorageClass: true
 
 svcMongoDb:
   # if disabled no volume allocation will take place
-  enabled: true
+  enabled: false
   name: mongo
   serviceName: mongo-atlas-service
   replicas: 1
@@ -148,9 +148,9 @@ svcMongoDb:
   dbDataPath: /data/db
 
 # Point this to your custom instance if you chose not to enable the internal MongoDB service
-dbConnectionStr: "{{ .Values.svcMongoDb.serviceName }}:{{ .Values.svcMongoDb.containerPort }}"
+dbConnectionStr: "{{ .Values.svcMongoDb.serviceName }}.influenzanet.svc.cluster.local:{{ .Values.svcMongoDb.containerPort }}"
 # Common prefix for database names (use for multitenant db)
-dbNamePrefix: ""
+dbNamePrefix: "infectieradar_be_staging_"
 dbConnectionPrefix: ""
 dbSecretName: "case-mongodb-atlas"
 
