@@ -75,7 +75,7 @@ smtpServers:
   servers:
     - host: smtp.eu.mailgun.org
       port: 587
-      connections: 1
+      connections: 2
       sendTimeout: 5
       auth:
         user: "{{ .Values.smtpUser }}"
@@ -88,7 +88,7 @@ prioSmtpServers:
   servers:
     - host: smtp.eu.mailgun.org
       port: 587
-      connections: 1
+      connections: 2
       sendTimeout: 5
       auth:
         user: "{{ .Values.smtpUser }}"
