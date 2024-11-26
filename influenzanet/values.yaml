@@ -148,7 +148,7 @@ svcMongoDb:
   dbDataPath: /data/db
 
 # Point this to your custom instance if you chose not to enable the internal MongoDB service
-dbConnectionStr: "{{ .Values.svcMongoDb.serviceName }}:{{ .Values.svcMongoDb.containerPort }}"
+dbConnectionStr: "{{ .Values.svcMongoDb.serviceName }}.influenzanet.svc.cluster.local:{{ .Values.svcMongoDb.containerPort }}"
 # Common prefix for database names (use for multitenant db)
 dbNamePrefix: "sensor_"
 dbConnectionPrefix: ""
