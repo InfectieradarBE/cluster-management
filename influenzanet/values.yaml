@@ -5,7 +5,7 @@
 # Platform description
 ##
 
-namespace: belgium
+namespace: sensor
 platformName: "Infectieradar Belgium Sensor"
 contactEmail: "support@survey.infectieradar.be"
 
