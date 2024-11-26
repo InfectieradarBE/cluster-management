@@ -40,7 +40,7 @@ tlsDomains: []
 issuerType: "acme"
 
 # If issuerType: 'acme'
-clusterIssuer: "letsencrypt"
+clusterIssuer: "sensor-letsencrypt"
 acmeServer: "https://acme-v02.api.letsencrypt.org/directory"
 acmeEmail: "admin@survey.infectieradar.be"
 # Name of the secret used to store the generated certificate
