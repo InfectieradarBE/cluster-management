@@ -162,7 +162,7 @@ dbSecretName: "case-mongodb-atlas"
 svcWebParticipant:
   name: web-client
   replicas: 1
-  image: infectieradarbe/participant-webapp:v1.8.62
+  image: infectieradarbe/participant-webapp:v1.8.65
   imagePullPolicy: Always
   containerPort: 3100
   serviceName: web-client-service
